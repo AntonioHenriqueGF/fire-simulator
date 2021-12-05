@@ -87,7 +87,7 @@
             size: CANVAS_RESOLUTION.width,
             tile_qtd: TILES_PER_ROW.MEDIUM,
             tile_size: CANVAS_RESOLUTION.width / TILES_PER_ROW.MEDIUM,
-            wind_speed: 0.3,
+            wind_speed: .18,
             grid: [],
             initialize: function(){
                 for(var i = 0; i < this.tile_qtd; i++){
@@ -108,9 +108,9 @@
                 for(var i = 0; i < this.tile_qtd; i++){
                     for(var j = 0; j < this.tile_qtd; j++){
                         this.grid[i][j].update();
-                        let wind = (Math.random() < this.wind_speed) ? 1 : 0;
+                        let wind = (Math.random() > this.wind_speed) ? 0 : 1;
                         if (this.valid_tile(i + wind, j - 1)) {
-                            this.grid[i + wind][j - 1].setHeat(this.grid[i][j].getHeat() - ((Math.random()) * this.grid[i][j].getHeat()) * 0.1);
+                            this.grid[i + wind][j - 1].setHeat(this.grid[i][j].getHeat() - ( ((Math.random() / 2) + 0.25) * this.grid[i][j].getHeat()) * 0.1);
                         }
                         if (j == this.tile_qtd - 1) {
                             this.grid[i][j].setHeat(Math.random());

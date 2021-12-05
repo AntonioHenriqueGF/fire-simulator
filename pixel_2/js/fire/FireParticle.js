@@ -38,8 +38,8 @@ class FireParticle {
 
     update () {
         this.cool();
-        let r = Math.floor((1 - Math.pow(Math.E, -40 * this.heat)) * 255);
-        let g = Math.floor(this.heat * 255);
+        let r = Math.floor((1 - Math.pow(Math.E, -5 * this.heat)) * 255);
+        let g = Math.floor(this.heat * 200);
         this.color = "rgb(" + r + ", " + g + ", 0)";
         this.paint();
     }
