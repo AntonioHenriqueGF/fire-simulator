@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fogo Grátis 2</title>
+
+    <!-- JQuery -->
+    <script src="./js/jquery.min.js"></script>
+
+    <!-- JavaScript -->
+    <script src="./js/config.js"></script>
+    <script src="./js/canvas/Canvas.js"></script>
+    <script src="./js/fire/FireParticle.js"></script>
+
+    <!-- Cartesian Classes -->
+    
+    <style>
+        .linha {
+            display: flex;
+        }
+
+        .pixel {
+            width:  25px;
+            height: 25px;
+            font-size: 60%;
+            text-align: center;
+            color: #fff;
+        }
+
+        .flex-center{
+            display:flex;
+            align-content: center;
+            width: 90%;
+        }
+
+        .h-center{
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .col{
+            display: flex;
+            align-content: center;
+            flex-direction: column;
+        }
+
+        .col div{
+            margin-left: 100%;
+        }
+
+        #canvas{
+            border: 3px solid #000;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="linha">
+        <canvas id="canvas">
+
+        </canvas>
+        <!-- <div class="col">
+            <div class="h-center"><br><br><br><br>
+                Vento: <br>
+                <input type="range" name="wind" id="wind">
+            </div>
+            <div class="h-center"><br><br><br><br>
+                Calor: <br>
+                <input type="range" name="heat" id="heat" min="0" max="155">
+            </div>
+            <div class="h-center"><br><br><br><br>
+                Oxigenio: <br>
+                <input type="range" name="oxi" id="oxi" min="10" max="100">
+            </div>
+        </div> -->
+    </div>
+    <script>
+
+        function initialize(){
+            return new Canvas(document.getElementById('canvas'), CANVAS_RESOLUTION.width, CANVAS_RESOLUTION.height);
+        }
+        var canvas = initialize();
+        var ctx = canvas.getContext();
+
+        var tile_grid = {
+            size: CANVAS_RESOLUTION.width,
+            tile_qtd: TILES_PER_ROW.MEDIUM,
+            tile_size: CANVAS_RESOLUTION.width / TILES_PER_ROW.MEDIUM,
+            wind_speed: 0.3,
+            grid: [],
+            initialize: function(){
+                for(var i = 0; i < this.tile_qtd; i++){
+                    this.grid[i] = [];
+                    for(var j = 0; j < this.tile_qtd; j++){
+                        this.grid[i][j] = new FireParticle(
+                            ctx, 
+                            new Rectangle(this.tile_size * i,this.tile_size * j , this.tile_size, this.tile_size), 
+                            (j == this.tile_qtd - 1) ? Math.random() : 0
+                        );
+                    }
+                }
+            },
+            valid_tile: function(i, j) {
+                return i >= 0 && i < this.tile_qtd && j >= 0 && j < this.tile_qtd;
+            },
+            update: function(){
+                for(var i = 0; i < this.tile_qtd; i++){
+                    for(var j = 0; j < this.tile_qtd; j++){
+                        this.grid[i][j].update();
+                        let wind = (Math.random() < this.wind_speed) ? 1 : 0;
+                        if (this.valid_tile(i + wind, j - 1)) {
+                            this.grid[i + wind][j - 1].setHeat(this.grid[i][j].getHeat() - ((Math.random()) * this.grid[i][j].getHeat()) * 0.1);
+                        }
+                        if (j == this.tile_qtd - 1) {
+                            this.grid[i][j].setHeat(Math.random());
+                        }
+                    }
+                }
+                if (DEBUG_MODE){
+                    for(var i = 0; i < this.tile_qtd; i++){
+                        for(var j = 0; j < this.tile_qtd; j++){
+                            this.grid[i][j].displayHeat();
+                        }
+                    }
+                }
+            },
+        }
+
+        tile_grid.initialize();
+
+        window.addEventListener("load", () => {
+            var count = 0;
+            var rectangle = new Rectangle(20, 20, CANVAS_RESOLUTION.width/100, CANVAS_RESOLUTION.height/100);
+            var particle = new FireParticle(ctx, rectangle, 1);
+            setInterval(function(){
+                canvas.update();
+                tile_grid.update();
+                count ++;
+            }, 1000/12);
+        });
+
+
+
+    </script>
+</body>
+</html>
